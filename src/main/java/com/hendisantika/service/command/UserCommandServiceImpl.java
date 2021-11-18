@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -70,7 +72,19 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
+    @Transactional
     public String updateUser(String userName, UserUpdateDTO updateUser) {
+        Optional<User> user = userRepository.findByUsername(userName);
+
+        if (user.isPresent()) {
+            user.get().setFirstName(updateUser.getFirstName());
+            user.get().setLastName(updateUser.getLastName());
+            user.get().setEmail(updateUser.getEmail());
+
+            return userRepository.save(user.get()).getUsername();
+        } else {
+            throw new EntityNotFoundException();
+        }
     }
 
     @Override
