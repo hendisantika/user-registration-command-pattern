@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -56,5 +57,14 @@ public class UserCommandController {
                                               @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
         return new ResponseEntity<>("User Updated: " + userCommandService.updateUser(userName, userUpdateDTO),
                 HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping(value = "/{userName}/passwords")
+    @ApiOperation("Updates password of user")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    private ResponseEntity<String> updatePassword(@PathVariable(name = "userName") String userName,
+                                                  @Valid @RequestBody @NotNull String newPassword) {
+        return new ResponseEntity<>("Password Updated for User: " + userCommandService.updatePassword(userName,
+                newPassword), HttpStatus.ACCEPTED);
     }
 }
