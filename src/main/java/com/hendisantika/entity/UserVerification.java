@@ -1,6 +1,8 @@
 package com.hendisantika.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,6 +24,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "user_verification")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserVerification {
 
     @Id

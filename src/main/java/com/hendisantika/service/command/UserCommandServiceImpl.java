@@ -1,11 +1,22 @@
 package com.hendisantika.service.command;
 
+import com.hendisantika.domain.commands.UserCreateDTO;
+import com.hendisantika.domain.commands.UserUpdateDTO;
+import com.hendisantika.entity.Role;
+import com.hendisantika.entity.User;
+import com.hendisantika.entity.UserStatus;
+import com.hendisantika.entity.UserVerification;
+import com.hendisantika.exception.UserIdNotAvailableException;
 import com.hendisantika.repository.UserRepository;
 import com.hendisantika.repository.UserVerificationRepository;
+import com.hendisantika.service.rule.UserBusinessRulesService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,4 +45,41 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Override
+    @Transactional
+    public String createUser(UserCreateDTO user) {
+        if (userBusinessRulesService.isUserNameAlreadyTaken(user)) {
+            throw new UserIdNotAvailableException("User Id " + user.getUserName() + " is already taken");
+        }
+        //Initializing the objects and mapping data
+        User newUser = modelMapper.map(user, User.class);
+        UserVerification newUserVerification = new UserVerification(UUID.randomUUID(), UUID.randomUUID().toString(),
+                newUser);
+
+        newUser.setId(UUID.randomUUID());
+        newUser.setStatus(String.valueOf(UserStatus.HOLD));
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        newUser.grantAuthority(Role.ROLE_USER);
+        if (user.getUserName().equals("admin"))
+            newUser.grantAuthority(Role.ROLE_ADMIN);
+        newUser.setVerification(newUserVerification);
+
+        newUser = userRepository.save(newUser.createUser());
+
+        return newUser.getUsername();
+    }
+
+    @Override
+    public String updateUser(String userName, UserUpdateDTO updateUser) {
+    }
+
+    @Override
+    public String updatePassword(String userName, String newPassword) {
+        return null;
+    }
+
+    @Override
+    public String deleteUser(String userName) {
+        return null;
+    }
 }
