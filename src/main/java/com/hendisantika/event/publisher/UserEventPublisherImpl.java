@@ -3,7 +3,9 @@ package com.hendisantika.event.publisher;
 import com.hendisantika.entity.User;
 import com.hendisantika.event.UserSource;
 import com.hendisantika.event.model.UserCreatedEvent;
+import com.hendisantika.event.snapshot.UserEventSnapshot;
 import com.hendisantika.repository.UserRepository;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -22,6 +24,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
  * Date: 19/11/21
  * Time: 06.05
  */
+@Log4j2
 @Service
 @EnableBinding(UserSource.class)
 public class UserEventPublisherImpl implements UserEventPublisher {
@@ -50,7 +53,7 @@ public class UserEventPublisherImpl implements UserEventPublisher {
                 createdUser.getStatus(),
                 createdUser.getVerification().getToken());
 
-        System.out.println(userEventSnapshot);
+        log.info(userEventSnapshot);
 
         userSource.userChannel().send(MessageBuilder.withPayload(userEventSnapshot).build());
     }
