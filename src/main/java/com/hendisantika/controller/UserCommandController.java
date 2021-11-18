@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -66,5 +67,12 @@ public class UserCommandController {
                                                   @Valid @RequestBody @NotNull String newPassword) {
         return new ResponseEntity<>("Password Updated for User: " + userCommandService.updatePassword(userName,
                 newPassword), HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping(value = "/{userName}")
+    @ApiOperation("Deletes a user")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    private ResponseEntity<String> deletePassword(@PathVariable(name = "userName") String userName) {
+        return new ResponseEntity<>("User Deleted: " + userCommandService.deleteUser(userName), HttpStatus.ACCEPTED);
     }
 }
