@@ -88,12 +88,21 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
+    @Transactional
     public String updatePassword(String userName, String newPassword) {
         return null;
     }
 
     @Override
+    @Transactional
     public String deleteUser(String userName) {
-        return null;
+        Optional<User> user = userRepository.findByUsername(userName);
+
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+            return userName;
+        } else {
+            throw new EntityNotFoundException();
+        }
     }
 }
