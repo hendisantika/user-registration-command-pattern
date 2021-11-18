@@ -42,4 +42,10 @@ public class UserQueryController {
         log.info("GET request received for username: " + userName);
         return new ResponseEntity<>(userQueryService.findByUserName(userName), HttpStatus.OK);
     }
+
+    @GetMapping(value = "/hello")
+    @ResponseStatus(HttpStatus.OK)
+    private String helloWorld() {
+        return "Hello World";
+    }
 }
