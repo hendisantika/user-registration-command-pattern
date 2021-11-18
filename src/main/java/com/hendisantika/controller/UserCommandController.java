@@ -1,6 +1,7 @@
 package com.hendisantika.controller;
 
 import com.hendisantika.domain.commands.UserCreateDTO;
+import com.hendisantika.domain.commands.UserUpdateDTO;
 import com.hendisantika.event.UserSource;
 import com.hendisantika.service.command.UserCommandService;
 import io.swagger.annotations.Api;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -44,5 +47,14 @@ public class UserCommandController {
     private ResponseEntity<String> createNewUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         return new ResponseEntity<>("New User Created: " + userCommandService.createUser(userCreateDTO),
                 HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/{userName}")
+    @ApiOperation("Updates a user")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    private ResponseEntity<String> updateUser(@PathVariable(name = "userName") String userName,
+                                              @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+        return new ResponseEntity<>("User Updated: " + userCommandService.updateUser(userName, userUpdateDTO),
+                HttpStatus.ACCEPTED);
     }
 }
