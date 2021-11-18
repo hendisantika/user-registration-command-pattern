@@ -43,7 +43,7 @@ public class UserEventPublisherImpl implements UserEventPublisher {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleUserCreatedEvent(UserCreatedEvent userCreatedEvent) {
         User createdUser = userRepository.findById(userCreatedEvent.getId()).get();
-        System.out.println(createdUser.getVerification().toString());
+        log.info(createdUser.getVerification().toString());
 
         UserEventSnapshot userEventSnapshot = new UserEventSnapshot(createdUser.getId(),
                 createdUser.getUsername(),
