@@ -10,6 +10,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,5 +54,17 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/api/users").access("hasAnyRole('USER')")
                 .antMatchers("/api/**").authenticated();
+    }
+
+    private static class OAuthRequestedMatcher implements RequestMatcher {
+        public boolean matches(HttpServletRequest request) {
+            // Determine if the resource called is "/api/**"
+            String path = request.getServletPath();
+            if (path.length() >= 5) {
+                path = path.substring(0, 5);
+                boolean isApi = path.equals("/api/");
+                return isApi;
+            } else return false;
+        }
     }
 }
